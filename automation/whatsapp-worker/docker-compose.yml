@@ -1,0 +1,15 @@
+services:
+  whatsapp-worker:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - whatsapp-data:/app/data
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    shm_size: 512mb
+
+volumes:
+  whatsapp-data:

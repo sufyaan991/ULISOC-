@@ -1,0 +1,2 @@
+ALTER TABLE `member_email_hashes` ADD `academic_year` text DEFAULT '2026/27' NOT NULL;--> statement-breakpoint
+ALTER TABLE `member_email_hashes` ADD `expires_at` integer DEFAULT 1817074800000 NOT NULL;

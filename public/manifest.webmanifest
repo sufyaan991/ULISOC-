@@ -1,0 +1,25 @@
+{
+  "name": "ULISOC Membership",
+  "short_name": "ULISOC",
+  "description": "Your University of Leicester Islamic Society digital membership card.",
+  "id": "/membership",
+  "start_url": "/membership",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#090808",
+  "theme_color": "#b10008",
+  "icons": [
+    {
+      "src": "/pwa-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/ulisoc-favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
