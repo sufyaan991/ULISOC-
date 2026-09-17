@@ -261,13 +261,13 @@ export default function Discounts() {
             </section>
           </div>
         )}
-        <style jsx>{`
+        <style>{`
           .discount-hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(380px,.9fr);gap:55px;align-items:center;margin-bottom:55px}.discount-hero .page-title{margin-bottom:0}.wallet-cta{border:1px solid #3b3533;background:linear-gradient(145deg,#151111,#0d0b0b);padding:28px;display:grid;grid-template-columns:58px 1fr;gap:22px;align-items:start}.wallet-cta img{width:58px;height:58px;object-fit:contain}.wallet-cta span,.wallet-cta small{text-transform:uppercase;letter-spacing:.11em;font-size:10px;font-weight:800;color:#9e9692}.wallet-cta h2{font-size:29px;line-height:1;margin:8px 0 10px}.wallet-cta p{color:#aaa;font-size:14px;line-height:1.5;margin:0 0 19px}.wallet-cta a{display:inline-flex;background:#c52028;color:#fff;padding:13px 16px;text-transform:uppercase;font-size:11px;font-weight:900}.wallet-cta a:hover{background:#fff;color:#090808}.wallet-cta small{display:block;margin-top:13px;line-height:1.4}
           .offers{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
           .offer{padding:30px;min-height:285px;border:1px solid var(--border);position:relative;overflow:hidden;transition:.2s background}
           .interactive{cursor:pointer}
           .interactive:focus-visible{outline:2px solid #c52028;outline-offset:4px}
-          .offer:hover{background:#b10008}
+          .offer:hover{background:#b3222d}
           .offer-copy{position:absolute;z-index:2;top:44%;left:30px;right:30px;transform:translateY(-50%)}
           .saving{font-size:clamp(46px,6vw,76px);margin:0 0 10px;color:#c52028}
           .offer:hover .saving{color:#fff}
