@@ -25,12 +25,15 @@ const securityHeaders={
   "Referrer-Policy":"strict-origin-when-cross-origin",
   "Permissions-Policy":"camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
   "X-Frame-Options":"DENY",
-  "Content-Security-Policy":"default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; media-src 'self' blob:; frame-src 'self'; upgrade-insecure-requests",
+  "Content-Security-Policy":"default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; media-src 'self' blob:; frame-src 'self'",
 };
 
-function secure(response:Response){
+// Only upgrade subresources on HTTPS pages. Over plain HTTP on a LAN address
+// (local previews), the upgrade rewrites CSS/JS to https:// and they fail to load.
+function secure(response:Response,url:URL){
   const secured=new Response(response.body,response);
   for(const [name,value] of Object.entries(securityHeaders))secured.headers.set(name,value);
+  if(url.protocol==="https:")secured.headers.set("Content-Security-Policy",`${securityHeaders["Content-Security-Policy"]}; upgrade-insecure-requests`);
   return secured;
 }
 
@@ -52,10 +55,10 @@ const worker = {
           const result = await env.IMAGES.input(body).transform(width > 0 ? { width } : {}).output({ format, quality });
           return result.response();
         },
-      }, allowedWidths));
+      }, allowedWidths), url);
     }
 
-    return secure(await handler.fetch(request, env, ctx));
+    return secure(await handler.fetch(request, env, ctx), url);
   },
 };
 

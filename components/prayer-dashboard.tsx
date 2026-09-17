@@ -765,7 +765,7 @@ export function PrayerDashboard({ jummah }: { jummah: JummahSchedule | null }) {
       {timetableOpen && (
         <MonthlyTimetable onClose={closeTimetable} closing={timetableClosing} />
       )}
-      <style jsx>{`
+      <style>{`
         .prayer-hero {
           display: grid;
           grid-template-columns: 1.15fr 1fr;
@@ -803,12 +803,13 @@ export function PrayerDashboard({ jummah }: { jummah: JummahSchedule | null }) {
           border: 1px solid #4e2024;
           padding: 30px;
           background: linear-gradient(145deg, #170e0f, #100e0e);
-          box-shadow: inset 4px 0 #b10008;
+          box-shadow: inset 4px 0 #b3222d;
         }
         .countdown {
-          font-size: clamp(42px, 5.6vw, 74px);
-          font-weight: 800;
-          letter-spacing: -0.055em;
+          font-family: var(--font-display);
+          font-size: clamp(56px, 7vw, 96px);
+          font-weight: 400;
+          letter-spacing: 0.01em;
           line-height: 1;
           margin: 28px 0;
         }
@@ -821,7 +822,9 @@ export function PrayerDashboard({ jummah }: { jummah: JummahSchedule | null }) {
           color: #aaa;
         }
         .target strong {
-          font-size: 30px;
+          font-family: var(--font-display);
+          font-weight: 400;
+          font-size: 38px;
           color: #fff;
         }
         .prayer-strip {
@@ -843,18 +846,23 @@ export function PrayerDashboard({ jummah }: { jummah: JummahSchedule | null }) {
         }
         .prayer-cell span {
           text-transform: uppercase;
-          color: #aaa;
-          font-size: 13px;
-          font-weight: 800;
+          color: #8c8480;
+          font-size: 12px;
+          font-weight: 400;
+          letter-spacing: 0.16em;
         }
         .prayer-cell strong {
-          font-size: 28px;
+          font-family: var(--font-display);
+          font-weight: 400;
+          font-size: 40px;
+          line-height: 1;
         }
         .prayer-cell.active {
-          background: #b10008;
+          background: #b3222d;
         }
         .prayer-cell.active span {
           color: #fff;
+          opacity: 0.9;
         }
         .quick-actions {
           display: grid;
@@ -869,18 +877,16 @@ export function PrayerDashboard({ jummah }: { jummah: JummahSchedule | null }) {
           border: 1px solid var(--border);
           padding: 19px 22px;
           text-transform: uppercase;
-          font:
-            800 13px Arial,
-            Helvetica,
-            sans-serif;
+          font: 700 13px var(--font-body);
+          letter-spacing: 0.08em;
           color: #fff;
           background: transparent;
           cursor: pointer;
           text-align: left;
         }
         .red-action {
-          background: #b10008;
-          border-color: #b10008;
+          background: #b3222d;
+          border-color: #b3222d;
         }
         .jummah {
           margin: 0 0 100px;
@@ -889,8 +895,8 @@ export function PrayerDashboard({ jummah }: { jummah: JummahSchedule | null }) {
         }
         .jummah.featured {
           margin-bottom: 54px;
-          background: #b10008;
-          border-color: #b10008;
+          background: #b3222d;
+          border-color: #b3222d;
         }
         .jummah-head {
           display: grid;
@@ -1047,7 +1053,7 @@ export function PrayerDashboard({ jummah }: { jummah: JummahSchedule | null }) {
           }
         }
       `}</style>
-      <style jsx>{`
+      <style>{`
         .date-lockup {
           display: flex;
           flex-direction: column;
@@ -1104,7 +1110,7 @@ export function PrayerDashboard({ jummah }: { jummah: JummahSchedule | null }) {
           }
         }
       `}</style>
-      <style jsx>{`
+      <style>{`
         .room-grid {
           display: grid;
           grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1116,7 +1122,7 @@ export function PrayerDashboard({ jummah }: { jummah: JummahSchedule | null }) {
           overflow: hidden;
           min-height: 250px;
           border: 1px solid var(--border);
-          border-radius: 16px;
+          border-radius: 0;
           background: linear-gradient(145deg, #151011, #0c0a0a);
           color: #fff;
           padding: 22px;
@@ -1275,7 +1281,7 @@ function PrayerRoomDetail({
           )}
         </div>
       </section>
-      <style jsx>{`
+      <style>{`
         .room-backdrop {
           position: fixed;
           z-index: 1000;
@@ -1293,7 +1299,7 @@ function PrayerRoomDetail({
           max-height: 92vh;
           overflow: auto;
           border: 1px solid #443738;
-          border-radius: 20px;
+          border-radius: 0;
           background: #090808;
           padding: 26px;
           display: grid;
@@ -1339,7 +1345,7 @@ function PrayerRoomDetail({
           cursor: pointer;
         }
         .room-close:hover {
-          background: #b10008;
+          background: #b3222d;
         }
         .room-video {
           position: relative;
@@ -1347,10 +1353,10 @@ function PrayerRoomDetail({
           width: 100%;
           max-height: 570px;
           border: 1px solid #5b292c;
-          border-radius: 14px;
+          border-radius: 0;
           background: #090808;
           overflow: hidden;
-          box-shadow: inset 4px 0 #b10008;
+          box-shadow: inset 4px 0 #b3222d;
         }
         .room-video video {
           display: block;
@@ -1363,7 +1369,7 @@ function PrayerRoomDetail({
           left: 12px;
           right: 12px;
           top: 12px;
-          border-radius: 999px;
+          border-radius: 0;
           background: #090808d9;
           border: 1px solid #ffffff35;
           color: #fff;
@@ -1418,7 +1424,7 @@ function PrayerRoomDetail({
         .room-map {
           display: inline-block;
           border: 1px solid #4e4542;
-          border-radius: 999px;
+          border-radius: 0;
           background: transparent;
           color: #776f6c;
           padding: 14px 19px;
@@ -1430,8 +1436,8 @@ function PrayerRoomDetail({
           cursor: not-allowed;
         }
         .room-map {
-          background: #b10008;
-          border-color: #b10008;
+          background: #b3222d;
+          border-color: #b3222d;
           color: #fff;
           transition: background 0.2s ease;
         }
@@ -1571,7 +1577,7 @@ function MonthlyTimetable({ onClose, closing }: { onClose: () => void; closing: 
           <strong>ulisoc.com</strong>
         </footer>
       </section>
-      <style jsx>{`
+      <style>{`
         .timetable-backdrop {
           position: fixed;
           z-index: 100;
@@ -1587,7 +1593,7 @@ function MonthlyTimetable({ onClose, closing }: { onClose: () => void; closing: 
           margin: auto;
           background: #f7f3ef;
           color: #100e0e;
-          border-top: 9px solid #b10008;
+          border-top: 9px solid #b3222d;
           padding: 30px 34px;
           box-shadow: 0 30px 90px #000;
           animation: window-rise-in 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -1658,7 +1664,7 @@ function MonthlyTimetable({ onClose, closing }: { onClose: () => void; closing: 
         }
         .monthly-actions button {
           border: 0;
-          background: #b10008;
+          background: #b3222d;
           color: #fff;
           padding: 13px 16px;
           text-transform: uppercase;
@@ -1684,7 +1690,7 @@ function MonthlyTimetable({ onClose, closing }: { onClose: () => void; closing: 
           font-size: 14px;
         }
         thead th {
-          background: #b10008;
+          background: #b3222d;
           color: #fff;
           text-transform: uppercase;
           font-size: 12px;
@@ -1712,7 +1718,7 @@ function MonthlyTimetable({ onClose, closing }: { onClose: () => void; closing: 
           color: #6b615d;
         }
         .monthly-note strong {
-          color: #b10008;
+          color: #b3222d;
         }
         @media (max-width: 760px) {
           .timetable-backdrop {
