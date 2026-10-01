@@ -1,6 +1,14 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "../vendor/shadcn-tailwind-4.13.0.css";
+
+/* Scrolling utilities used by the shared component catalog. */
+@utility scrollbar-thin { scrollbar-width: thin; }
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+@utility scrollbar-gutter-stable { scrollbar-gutter: stable; }
 @font-face{font-family:"Bebas Neue";src:url("/fonts/bebas-neue-latin-400.woff2") format("woff2");font-style:normal;font-weight:400;font-display:swap}
 @font-face{font-family:"Manrope";src:url("/fonts/manrope-latin-wght.woff2") format("woff2");font-style:normal;font-weight:200 800;font-display:swap}
 :root{--background:#0a0909;--foreground:#f3efec;--card:#13100f;--card-foreground:#f3efec;--popover:#13100f;--popover-foreground:#f3efec;--primary:#b3222d;--primary-foreground:#fff8f2;--secondary:#171313;--secondary-foreground:#f3efec;--muted:#171313;--muted-foreground:#a29a96;--accent:#b3222d;--accent-foreground:#fff8f2;--destructive:#b3222d;--border:#2a2525;--input:#2a2525;--ring:#b3222d;--radius:0rem;--font-display:"Bebas Neue",Impact,"Arial Narrow Bold",sans-serif;--font-body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;--text-red:#ef4b3f}

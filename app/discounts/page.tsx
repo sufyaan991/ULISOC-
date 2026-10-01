@@ -197,7 +197,7 @@ export default function Discounts() {
   return (
     <SiteFrame active="discounts">
       <div className="wrap">
-        <div className="discount-hero"><h1 className="display page-title">MEMBER<br/><span className="red">DISCOUNTS</span></h1><aside className="wallet-cta"><img src="/assets/ulisoc-logo-red.png" alt=""/><div><span>Already got your membership?</span><h2>Add it to your Wallet.</h2><p>Verify your membership and keep your ULISOC card on your phone.</p><a href="/membership">Get your digital membership →</a><small>Google Wallet available · Apple Wallet coming soon</small></div></aside></div>
+        <div className="discount-hero"><h1 className="display page-title">MEMBER<br/><span className="red">DISCOUNTS</span></h1><aside className="wallet-cta"><img src="/assets/ulisoc-logo-red.png" alt=""/><div><span>Already got your membership?</span><h2>Add it to your Wallet.</h2><p>Digital membership is temporarily unavailable while we update the service.</p><a href="/membership">Membership service status →</a><small>Digital membership temporarily unavailable</small></div></aside></div>
         <section className="offers">
           {offers.map((offer, index) => (
             <article

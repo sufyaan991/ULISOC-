@@ -1,7 +1,6 @@
-import { env } from "cloudflare:workers";
 
 const encoder = new TextEncoder();
-const runtime = () => env as unknown as Record<string, string | undefined>;
+const runtime = () => process.env;
 
 export const noStoreHeaders = { "cache-control": "no-store, private, max-age=0", pragma: "no-cache" } as const;
 
@@ -40,7 +39,8 @@ export function secureBytesEqual(a: Uint8Array, b: Uint8Array) {
 }
 
 export function requestIp(request: Request) {
-  return (request.headers.get("cf-connecting-ip") ?? request.headers.get("x-forwarded-for")?.split(",")[0] ?? "unknown").trim();
+  // Vercel overwrites x-forwarded-for; cf-connecting-ip is untrusted here.
+  return (request.headers.get("x-forwarded-for")?.split(",")[0] ?? "unknown").trim();
 }
 
 export function isSameOrigin(request: Request) {

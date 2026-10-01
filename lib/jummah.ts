@@ -1,12 +1,11 @@
 import { and, asc, desc, eq, gte } from "drizzle-orm";
-import { env } from "cloudflare:workers";
 import { getDb } from "@/db";
 import { jummahSchedules } from "@/db/schema";
 
 export type JummahVenue = "sports-hall" | "studio-013" | "no-campus";
 export type JummahSchedule = typeof jummahSchedules.$inferSelect;
 
-export const venues: Record<JummahVenue, {name:string; detail:string; sisters:string; maps:string}> = {
+export const venues: Record<Exclude<JummahVenue,"no-campus">, {name:string; detail:string; sisters:string; maps:string}> = {
   "sports-hall": {
     name: "Charles Wilson Sports Hall",
     detail: "Charles Wilson Building, University Road",
@@ -41,7 +40,7 @@ export async function getJummahHistory(){
 }
 
 export function isJummahAdmin(email:string){
-  const configured=((env as unknown as Record<string,string|undefined>).JUMMAH_ADMIN_EMAILS??"talhawan7232@gmail.com").split(",").map(value=>value.trim().toLowerCase()).filter(Boolean);
+  const configured=((process.env).JUMMAH_ADMIN_EMAILS??"talhawan7232@gmail.com").split(",").map(value=>value.trim().toLowerCase()).filter(Boolean);
   return configured.includes(email.toLowerCase());
 }
 

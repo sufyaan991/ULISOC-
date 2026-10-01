@@ -1,3 +1,4 @@
+import { databaseFeaturesEnabled } from "@/lib/features";
 import { headers } from "next/headers";
 import { hasEditorSession } from "@/lib/jummah-auth";
 import { hasAutomationAccess } from "@/lib/jummah-automation";
@@ -7,6 +8,7 @@ import { JummahPoster } from "@/components/jummah-poster";
 export const dynamic="force-dynamic";
 
 export default async function AutomationPosterPage({searchParams}:{searchParams:Promise<{date?:string}>}){
+  if(!databaseFeaturesEnabled)return <PlainStatus message="Poster service temporarily unavailable"/>;
   if(!await hasEditorSession()&&!await hasAutomationAccess(await headers()))return <PlainStatus message="Not authorised"/>;
   const {date=""}=await searchParams;
   const schedule=await getJummahForFriday(date);

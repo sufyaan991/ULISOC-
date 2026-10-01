@@ -92,7 +92,7 @@ export async function verifyMembershipQrToken(token:string){
     if(!secureBytesEqual(base64UrlToBytes(signature),expected))return null;
     const value=JSON.parse(new TextDecoder().decode(base64UrlToBytes(payload))) as {v?:number;id?:string;year?:string;exp?:number};
     if(value.v!==1||typeof value.id!=="string"||typeof value.year!=="string"||typeof value.exp!=="number"||value.exp<=Date.now())return null;
-    return value;
+    return {v:value.v,id:value.id,year:value.year,exp:value.exp};
   }catch{return null}
 }
 export async function createGoogleWalletLink(objectId:string,membershipId:string,memberName:string,academicYear:string,expiresAt:number) {

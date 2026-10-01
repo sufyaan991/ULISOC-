@@ -36,7 +36,7 @@ test("Wallet passes use signed longer IDs and an expiry interval",async()=>{
 });
 
 test("site-wide browser protections include CSP and anti-framing",async()=>{
-  const worker=await source("worker/index.ts");
+  const worker=await source("next.config.ts");
   for(const header of ["Strict-Transport-Security","X-Content-Type-Options","Referrer-Policy","Permissions-Policy","X-Frame-Options","Content-Security-Policy"])assert.match(worker,new RegExp(header));
   assert.match(worker,/frame-ancestors 'none'/);
 });

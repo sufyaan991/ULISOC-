@@ -1,3 +1,5 @@
+import { databaseFeaturesEnabled } from "@/lib/features";
+import { ServiceUnavailable } from "@/components/service-unavailable";
 import { AdminHeader } from "@/components/admin-header";
 import { hasEditorSession } from "@/lib/jummah-auth";
 import { JummahLogin } from "../jummah/login";
@@ -6,6 +8,7 @@ import { getCurrentJummah } from "@/lib/jummah";
 export const dynamic = "force-dynamic";
 
 export default async function PosterGeneratorPage() {
+  if (!databaseFeaturesEnabled) return <ServiceUnavailable title="Committee tools temporarily unavailable" />;
   if (!await hasEditorSession()) return <JummahLogin />;
   const schedule=await getCurrentJummah();
 
