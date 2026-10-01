@@ -1,4 +1,4 @@
-import { env } from "cloudflare:workers";
+import { database, type SqlStatement } from "@/db/sql";
 import { hasEditorSession } from "@/lib/jummah-auth";
 import { expireGoogleWalletObject } from "@/lib/google-wallet";
 import { currentMembershipPeriod, purgeExpiredMembershipData } from "@/lib/membership-lifecycle";
@@ -8,10 +8,10 @@ import { jsonNoStore, rejectOversizedRequest, requireSameOrigin } from "@/lib/se
 export const dynamic = "force-dynamic";
 
 async function migrateLegacyCrypto(){
-  const db=env.DB;
+  const db=database;
   const complete=await db.prepare("SELECT 1 AS ok FROM discount_secrets WHERE key='crypto_migration_v2'").first();
   if(complete)return;
-  const statements:D1PreparedStatement[]=[];
+  const statements:SqlStatement[]=[];
   const secrets=await db.prepare("SELECT key,encrypted_value,iv FROM discount_secrets").all<{key:string;encrypted_value:string;iv:string}>();
   for(const row of secrets.results){const value=await decryptSecret(row.encrypted_value,row.iv);const encrypted=await encryptSecret(value);statements.push(db.prepare("UPDATE discount_secrets SET encrypted_value=?,iv=?,updated_at=CURRENT_TIMESTAMP WHERE key=?").bind(encrypted.encryptedValue,encrypted.iv,row.key))}
   const members=await db.prepare("SELECT email_hash,encrypted_email,email_iv FROM member_email_hashes WHERE encrypted_email IS NOT NULL AND email_iv IS NOT NULL").all<{email_hash:string;encrypted_email:string;email_iv:string}>();
@@ -23,7 +23,7 @@ async function migrateLegacyCrypto(){
 }
 
 async function status(){
-  const db=env.DB;
+  const db=database;
   await migrateLegacyCrypto();
   await purgeExpiredMembershipData();
   const period=currentMembershipPeriod();
@@ -48,7 +48,7 @@ export async function POST(request:Request){
   const oversized=rejectOversizedRequest(request,524288);if(oversized)return oversized;
   if(!await hasEditorSession())return jsonNoStore({error:"Not authorised"},{status:403});
   const body=await request.json().catch(()=>({})) as {brevoApiKey?:string;podurCode?:string;calisCode?:string;memberEmails?:string;walletServiceAccount?:string;confirmMemberRemoval?:boolean};
-  const db=env.DB;const statements:D1PreparedStatement[]=[];
+  const db=database;const statements:SqlStatement[]=[];
   const saveSecret=async(key:string,value?:string)=>{if(value?.trim()){const encrypted=await encryptSecret(value.trim());statements.push(db.prepare("INSERT INTO discount_secrets (key,encrypted_value,iv,updated_at) VALUES (?,?,?,CURRENT_TIMESTAMP) ON CONFLICT(key) DO UPDATE SET encrypted_value=excluded.encrypted_value,iv=excluded.iv,updated_at=CURRENT_TIMESTAMP").bind(key,encrypted.encryptedValue,encrypted.iv))}};
   await saveSecret("brevo_api_key",body.brevoApiKey);
   await saveSecret("podur_code",body.podurCode);

@@ -1,10 +1,9 @@
 import { cookies } from "next/headers";
-import { env } from "cloudflare:workers";
 import { base64UrlToBytes, bytesToBase64Url, hmacBytes, runtimeSecret, secureBytesEqual } from "@/lib/security";
 
 const COOKIE="ulisoc_jummah_editor";
 const encoder=new TextEncoder();
-const runtime=()=>env as unknown as Record<string,string|undefined>;
+const runtime=()=>process.env;
 const SESSION_SECONDS=12*60*60;
 
 async function digest(value:string){return new Uint8Array(await crypto.subtle.digest("SHA-256",encoder.encode(value)))}

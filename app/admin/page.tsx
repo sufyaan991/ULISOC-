@@ -1,3 +1,5 @@
+import { databaseFeaturesEnabled } from "@/lib/features";
+import { ServiceUnavailable } from "@/components/service-unavailable";
 import Link from "next/link";
 import { hasEditorSession } from "@/lib/jummah-auth";
 import { JummahLogin } from "./jummah/login";
@@ -30,6 +32,7 @@ const tools = [
 ];
 
 export default async function AdminPortalPage() {
+  if (!databaseFeaturesEnabled) return <ServiceUnavailable title="Committee tools temporarily unavailable" />;
   if (!await hasEditorSession()) return <JummahLogin />;
 
   return <main className="admin-shell">

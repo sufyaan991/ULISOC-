@@ -1,7 +1,8 @@
 # ULISOC
 
-Islamic Society website for the University of Leicester. Next.js/vinext on
-Cloudflare Workers, with D1 + Drizzle.
+Islamic Society website for the University of Leicester. Next.js on Vercel. Supabase setup is deferred; database-backed features
+are currently disabled.
+See DEPLOYMENT.md for deployment and data migration requirements.
 
 ## Git conventions
 

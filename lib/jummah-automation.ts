@@ -1,4 +1,3 @@
-import { env } from "cloudflare:workers";
 import { getJummahForFriday, venues, type JummahSchedule, type JummahVenue } from "@/lib/jummah";
 import { runtimeSecret, secureBytesEqual } from "@/lib/security";
 

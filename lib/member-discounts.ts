@@ -1,9 +1,9 @@
-import { env } from "cloudflare:workers";
+import { database } from "@/db/sql";
 import { hmacBytes, runtimeSecret } from "@/lib/security";
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
-const runtime = () => env as unknown as Record<string, string | undefined>;
+const runtime = () => process.env;
 
 function bytesToBase64(bytes: Uint8Array) {
   return btoa(String.fromCharCode(...bytes));
@@ -57,7 +57,7 @@ export const encryptMemberEmail = encryptSecret;
 export const decryptMemberEmail = decryptSecret;
 
 export async function getDiscountSecret(key: "brevo_api_key" | "podur_code" | "calis_code" | "wallet_service_account") {
-  const row = await env.DB.prepare("SELECT encrypted_value, iv FROM discount_secrets WHERE key = ?").bind(key).first<{encrypted_value:string;iv:string}>();
+  const row = await database.prepare("SELECT encrypted_value, iv FROM discount_secrets WHERE key = ?").bind(key).first<{encrypted_value:string;iv:string}>();
   if (!row) return null;
   return decryptSecret(row.encrypted_value, row.iv);
 }

@@ -1,4 +1,4 @@
-import { env } from "cloudflare:workers";
+import { database } from "@/db/sql";
 
 export type MembershipPeriod={academicYear:string;expiresAt:number};
 
@@ -15,9 +15,9 @@ export function membershipIsActive(expiresAt:number,now=Date.now()){return expir
 export function walletExpiryIso(expiresAt:number){return new Date(expiresAt).toISOString()}
 
 export async function purgeExpiredMembershipData(now=Date.now()){
-  await env.DB.batch([
-    env.DB.prepare("DELETE FROM otp_challenges WHERE expires_at<=?").bind(now),
-    env.DB.prepare("DELETE FROM member_email_hashes WHERE expires_at<=?").bind(now),
-    env.DB.prepare("DELETE FROM wallet_membership_passes WHERE expires_at<=?").bind(now),
+  await database.batch([
+    database.prepare("DELETE FROM otp_challenges WHERE expires_at<=?").bind(now),
+    database.prepare("DELETE FROM member_email_hashes WHERE expires_at<=?").bind(now),
+    database.prepare("DELETE FROM wallet_membership_passes WHERE expires_at<=?").bind(now),
   ]);
 }

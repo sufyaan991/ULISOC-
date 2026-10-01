@@ -1,13 +1,9 @@
-import { env } from "cloudflare:workers";
-import { drizzle } from "drizzle-orm/d1";
+import { drizzle } from "drizzle-orm/sqlite-proxy";
+import { databaseUnavailable } from "./sql";
 import * as schema from "./schema";
 
+// Existing SQLite schema is retained as migration reference only.
+// Replace this with the Supabase data layer when that project is configured.
 export function getDb() {
-  if (!env.DB) {
-    throw new Error(
-      "Cloudflare D1 binding `DB` is unavailable. Set the `d1` field in .openai/hosting.json to `DB` or let your control plane inject the real binding values before using the database."
-    );
-  }
-
-  return drizzle(env.DB, { schema });
+  return drizzle(async () => databaseUnavailable(), { schema });
 }
