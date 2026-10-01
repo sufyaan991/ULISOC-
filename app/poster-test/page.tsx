@@ -1,4 +1,3 @@
-import { databaseFeaturesEnabled } from "@/lib/features";
 import { headers } from "next/headers";
 import { hasEditorSession } from "@/lib/jummah-auth";
 import { hasAutomationAccess } from "@/lib/jummah-automation";
@@ -40,10 +39,6 @@ export default async function AutomationPosterPage({
       hostname === "localhost" ||
       hostname === "127.0.0.1"
     );
-
-  if (!localFixture && !databaseFeaturesEnabled) {
-    return <PlainStatus message="Poster service temporarily unavailable" />;
-  }
 
   const authorised =
     localFixture ||
