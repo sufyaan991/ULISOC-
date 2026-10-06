@@ -1,4 +1,5 @@
 "use client";
+import LivePrayerTimes, { type PrayerTimes } from "@/components/live-prayer-times";
 import { useEffect, useMemo, useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { JummahSchedule } from "@/lib/jummah";
@@ -554,7 +555,8 @@ function countdown(now: Date | null, target: string, tomorrow = false) {
   return `${hours}h ${String(minutes).padStart(2, "0")}m ${String(seconds).padStart(2, "0")}s`;
 }
 
-export function PrayerDashboard({ jummah }: { jummah: JummahSchedule | null }) {
+export function PrayerDashboard({ jummah }: { jummah: JummahSchedule | null }){
+  const [liveTimes, setLiveTimes] = useState<PrayerTimes | null>(null);
   const [now, setNow] = useState<Date | null>(null);
   const [choice, setChoice] = useState<Choice>("early");
   const [timetableOpen, setTimetableOpen] = useState(false);
@@ -604,10 +606,24 @@ export function PrayerDashboard({ jummah }: { jummah: JummahSchedule | null }) {
       document.body.style.overflow = "";
     };
   }, [activeRoom]);
-  const today =
+  const savedToday =
     now && now.getFullYear() === 2026 && now.getMonth() === 9
       ? october2026[now.getDate() - 1]
       : october2026[0];
+  const today: MonthRow = liveTimes
+    ? {
+        day: savedToday.day,
+        fajrEarly: liveTimes.fajr,
+        fajrLate: liveTimes.fajr,
+        sunrise: liveTimes.sunrise,
+        dhuhr: liveTimes.dhuhr,
+        asrEarly: liveTimes.asrEarly,
+        asrLate: liveTimes.asrLate,
+        maghrib: liveTimes.maghrib,
+        ishaEarly: liveTimes.isha,
+        ishaLate: liveTimes.isha,
+      }
+    : savedToday;
   const prayers = useMemo(
     () => [
       {
@@ -654,6 +670,7 @@ export function PrayerDashboard({ jummah }: { jummah: JummahSchedule | null }) {
   const islamicDate = now ? formatHijriDate(now) : "";
   return (
     <div className="wrap">
+      <LivePrayerTimes onLoad={setLiveTimes} />
       {fridayMode && <Jummah schedule={jummah} featured />}
       <section className="prayer-hero">
         <div>

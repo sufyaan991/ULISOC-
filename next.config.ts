@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   async headers() {
     const csp = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'" +
       (process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "") +
-      "; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self'; media-src 'self' blob:; frame-src 'self'";
+      "; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self' https://api.aladhan.com;; media-src 'self' blob:; frame-src 'self'";
     return [
       {
         source: "/:path*",
