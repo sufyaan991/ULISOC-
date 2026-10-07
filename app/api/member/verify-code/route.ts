@@ -14,7 +14,10 @@ export async function POST(request: Request) {
   if (!isEmail(email) || !/^\d{6,10}$/.test(code)) return jsonNoStore({ error: "Check the code from your email." }, { status: 400 });
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.verifyOtp({ email, token: code, type: "email" });
-  if (error) return jsonNoStore({ error: "That code isn't right or has expired. Try again or request a new one." }, { status: 400 });
+  if (error) {
+    console.error("Supabase code verification failed", error.status, error.code, error.message);
+    return jsonNoStore({ error: "That code isn't right or has expired. Try again or request a new one." }, { status: 400 });
+  }
   const member = await findMember(email);
   if (!member) {
     await supabase.auth.signOut();

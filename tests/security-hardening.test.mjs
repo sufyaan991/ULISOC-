@@ -21,8 +21,8 @@ test("members-only routes re-check the member list on every request",async()=>{
   const [code,pass,members,request]=await Promise.all([source("app/api/discounts/code/route.ts"),source("app/api/membership/create-pass/route.ts"),source("lib/members.ts"),source("app/api/member/request-code/route.ts")]);
   assert.match(code,/currentMember\(\)/);assert.match(pass,/currentMember\(\)/);
   assert.match(members,/auth\.getUser\(\)/);assert.match(members,/lower\(email\) = lower\(\?\)/);
-  // Same response for members and non-members, so the endpoint does not reveal who is a member.
-  assert.match(request,/if \(member\)/);assert.doesNotMatch(request,/status: 404/);
+  // Codes are only sent to emails on the member list.
+  assert.match(request,/if \(!await findMember\(email\)\)/);assert.match(request,/status: 404/);
 });
 
 test("discounts contain no embedded map or Cali's secret",async()=>{

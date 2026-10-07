@@ -102,412 +102,415 @@ const roomInformation: Record<
     ],
   },
 };
-// Sufyan's hard-coded October 2026 timetable (commit 3a02d9b). Used only when both
-// masjid sources are unavailable, so the page still shows times that month.
-const october2026: MonthRow[] = [
-  [
-    1,
-    "05:11",
-    "05:31",
-    "07:06",
-    "12:59",
-    "15:57",
-    "16:46",
-    "18:44",
-    "20:02",
-    "20:15",
-  ],
-  [
-    2,
-    "05:12",
-    "05:33",
-    "07:07",
-    "12:59",
-    "15:56",
-    "16:44",
-    "18:41",
-    "20:00",
-    "20:14",
-  ],
-  [
-    3,
-    "05:14",
-    "05:35",
-    "07:09",
-    "12:59",
-    "15:54",
-    "16:42",
-    "18:39",
-    "19:57",
-    "20:10",
-  ],
-  [
-    4,
-    "05:16",
-    "05:37",
-    "07:11",
-    "12:58",
-    "15:52",
-    "16:40",
-    "18:37",
-    "19:55",
-    "20:08",
-  ],
-  [
-    5,
-    "05:18",
-    "05:39",
-    "07:13",
-    "12:58",
-    "15:50",
-    "16:37",
-    "18:34",
-    "19:53",
-    "20:06",
-  ],
-  [
-    6,
-    "05:20",
-    "05:40",
-    "07:14",
-    "12:58",
-    "15:49",
-    "16:35",
-    "18:32",
-    "19:50",
-    "20:03",
-  ],
-  [
-    7,
-    "05:22",
-    "05:42",
-    "07:16",
-    "12:57",
-    "15:47",
-    "16:33",
-    "18:30",
-    "19:48",
-    "20:01",
-  ],
-  [
-    8,
-    "05:24",
-    "05:44",
-    "07:18",
-    "12:57",
-    "15:45",
-    "16:31",
-    "18:28",
-    "19:46",
-    "19:59",
-  ],
-  [
-    9,
-    "05:25",
-    "05:46",
-    "07:20",
-    "12:57",
-    "15:43",
-    "16:29",
-    "18:25",
-    "19:44",
-    "19:58",
-  ],
-  [
-    10,
-    "05:27",
-    "05:47",
-    "07:21",
-    "12:57",
-    "15:42",
-    "16:27",
-    "18:23",
-    "19:41",
-    "19:56",
-  ],
-  [
-    11,
-    "05:29",
-    "05:49",
-    "07:23",
-    "12:56",
-    "15:40",
-    "16:25",
-    "18:21",
-    "19:39",
-    "19:56",
-  ],
-  [
-    12,
-    "05:31",
-    "05:51",
-    "07:25",
-    "12:56",
-    "15:38",
-    "16:23",
-    "18:18",
-    "19:37",
-    "19:55",
-  ],
-  [
-    13,
-    "05:33",
-    "05:53",
-    "07:27",
-    "12:56",
-    "15:36",
-    "16:21",
-    "18:16",
-    "19:35",
-    "19:53",
-  ],
-  [
-    14,
-    "05:34",
-    "05:54",
-    "07:28",
-    "12:56",
-    "15:35",
-    "16:19",
-    "18:14",
-    "19:32",
-    "19:52",
-  ],
-  [
-    15,
-    "05:36",
-    "05:56",
-    "07:30",
-    "12:55",
-    "15:33",
-    "16:17",
-    "18:12",
-    "19:30",
-    "19:52",
-  ],
-  [
-    16,
-    "05:38",
-    "05:58",
-    "07:32",
-    "12:55",
-    "15:31",
-    "16:15",
-    "18:09",
-    "19:28",
-    "19:51",
-  ],
-  [
-    17,
-    "05:40",
-    "05:59",
-    "07:34",
-    "12:55",
-    "15:29",
-    "16:13",
-    "18:07",
-    "19:26",
-    "19:50",
-  ],
-  [
-    18,
-    "05:41",
-    "06:01",
-    "07:36",
-    "12:55",
-    "15:28",
-    "16:11",
-    "18:05",
-    "19:24",
-    "19:48",
-  ],
-  [
-    19,
-    "05:43",
-    "06:03",
-    "07:37",
-    "12:55",
-    "15:26",
-    "16:09",
-    "18:03",
-    "19:22",
-    "19:47",
-  ],
-  [
-    20,
-    "05:45",
-    "06:05",
-    "07:39",
-    "12:54",
-    "15:24",
-    "16:07",
-    "18:01",
-    "19:20",
-    "19:46",
-  ],
-  [
-    21,
-    "05:46",
-    "06:06",
-    "07:41",
-    "12:54",
-    "15:23",
-    "16:05",
-    "17:59",
-    "19:18",
-    "19:46",
-  ],
-  [
-    22,
-    "05:48",
-    "06:08",
-    "07:43",
-    "12:54",
-    "15:21",
-    "16:03",
-    "17:57",
-    "19:16",
-    "19:45",
-  ],
-  [
-    23,
-    "05:50",
-    "06:10",
-    "07:45",
-    "12:54",
-    "15:19",
-    "16:01",
-    "17:54",
-    "19:14",
-    "19:44",
-  ],
-  [
-    24,
-    "05:51",
-    "06:11",
-    "07:46",
-    "12:54",
-    "15:18",
-    "15:59",
-    "17:52",
-    "19:12",
-    "19:43",
-  ],
-  [
-    25,
-    "04:53",
-    "05:13",
-    "06:48",
-    "11:54",
-    "14:16",
-    "14:57",
-    "16:50",
-    "18:10",
-    "18:42",
-  ],
-  [
-    26,
-    "04:55",
-    "05:15",
-    "06:50",
-    "11:54",
-    "14:15",
-    "14:56",
-    "16:48",
-    "18:08",
-    "18:41",
-  ],
-  [
-    27,
-    "04:56",
-    "05:16",
-    "06:52",
-    "11:53",
-    "14:13",
-    "14:54",
-    "16:46",
-    "18:06",
-    "18:40",
-  ],
-  [
-    28,
-    "04:58",
-    "05:18",
-    "06:54",
-    "11:53",
-    "14:11",
-    "14:52",
-    "16:44",
-    "18:05",
-    "18:38",
-  ],
-  [
-    29,
-    "05:00",
-    "05:20",
-    "06:56",
-    "11:53",
-    "14:10",
-    "14:50",
-    "16:42",
-    "18:03",
-    "18:36",
-  ],
-  [
-    30,
-    "05:01",
-    "05:21",
-    "06:57",
-    "11:53",
-    "14:08",
-    "14:48",
-    "16:40",
-    "18:01",
-    "18:34",
-  ],
-  [
-    31,
-    "05:03",
-    "05:23",
-    "06:59",
-    "11:53",
-    "14:07",
-    "14:46",
-    "16:38",
-    "17:59",
-    "18:33",
-  ],
-].map(
-  ([
-    day,
-    fajrEarly,
-    fajrLate,
-    sunrise,
-    dhuhr,
-    asrEarly,
-    asrLate,
-    maghrib,
-    ishaEarly,
-    ishaLate,
-  ]) => ({
-    day: +day,
-    fajrEarly: String(fajrEarly),
-    fajrLate: String(fajrLate),
-    sunrise: String(sunrise),
-    dhuhr: String(dhuhr),
-    asrEarly: String(asrEarly),
-    asrLate: String(asrLate),
-    maghrib: String(maghrib),
-    ishaEarly: String(ishaEarly),
-    ishaLate: String(ishaLate),
-  }),
-);
-const october2026Fallback: PrayerTimetable = {
-  year: 2026,
-  month: 10,
-  days: october2026,
-  sources: { ida: false, markazQuba: false },
-};
+// DISABLED (Sufyan's hard-coded times) — keep for comparison, do not delete
+// Only the live IDA / Markaz Quba timetable is used now.
+// // Sufyan's hard-coded October 2026 timetable (commit 3a02d9b). Used only when both
+// // masjid sources are unavailable, so the page still shows times that month.
+// const october2026: MonthRow[] = [
+//   [
+//     1,
+//     "05:11",
+//     "05:31",
+//     "07:06",
+//     "12:59",
+//     "15:57",
+//     "16:46",
+//     "18:44",
+//     "20:02",
+//     "20:15",
+//   ],
+//   [
+//     2,
+//     "05:12",
+//     "05:33",
+//     "07:07",
+//     "12:59",
+//     "15:56",
+//     "16:44",
+//     "18:41",
+//     "20:00",
+//     "20:14",
+//   ],
+//   [
+//     3,
+//     "05:14",
+//     "05:35",
+//     "07:09",
+//     "12:59",
+//     "15:54",
+//     "16:42",
+//     "18:39",
+//     "19:57",
+//     "20:10",
+//   ],
+//   [
+//     4,
+//     "05:16",
+//     "05:37",
+//     "07:11",
+//     "12:58",
+//     "15:52",
+//     "16:40",
+//     "18:37",
+//     "19:55",
+//     "20:08",
+//   ],
+//   [
+//     5,
+//     "05:18",
+//     "05:39",
+//     "07:13",
+//     "12:58",
+//     "15:50",
+//     "16:37",
+//     "18:34",
+//     "19:53",
+//     "20:06",
+//   ],
+//   [
+//     6,
+//     "05:20",
+//     "05:40",
+//     "07:14",
+//     "12:58",
+//     "15:49",
+//     "16:35",
+//     "18:32",
+//     "19:50",
+//     "20:03",
+//   ],
+//   [
+//     7,
+//     "05:22",
+//     "05:42",
+//     "07:16",
+//     "12:57",
+//     "15:47",
+//     "16:33",
+//     "18:30",
+//     "19:48",
+//     "20:01",
+//   ],
+//   [
+//     8,
+//     "05:24",
+//     "05:44",
+//     "07:18",
+//     "12:57",
+//     "15:45",
+//     "16:31",
+//     "18:28",
+//     "19:46",
+//     "19:59",
+//   ],
+//   [
+//     9,
+//     "05:25",
+//     "05:46",
+//     "07:20",
+//     "12:57",
+//     "15:43",
+//     "16:29",
+//     "18:25",
+//     "19:44",
+//     "19:58",
+//   ],
+//   [
+//     10,
+//     "05:27",
+//     "05:47",
+//     "07:21",
+//     "12:57",
+//     "15:42",
+//     "16:27",
+//     "18:23",
+//     "19:41",
+//     "19:56",
+//   ],
+//   [
+//     11,
+//     "05:29",
+//     "05:49",
+//     "07:23",
+//     "12:56",
+//     "15:40",
+//     "16:25",
+//     "18:21",
+//     "19:39",
+//     "19:56",
+//   ],
+//   [
+//     12,
+//     "05:31",
+//     "05:51",
+//     "07:25",
+//     "12:56",
+//     "15:38",
+//     "16:23",
+//     "18:18",
+//     "19:37",
+//     "19:55",
+//   ],
+//   [
+//     13,
+//     "05:33",
+//     "05:53",
+//     "07:27",
+//     "12:56",
+//     "15:36",
+//     "16:21",
+//     "18:16",
+//     "19:35",
+//     "19:53",
+//   ],
+//   [
+//     14,
+//     "05:34",
+//     "05:54",
+//     "07:28",
+//     "12:56",
+//     "15:35",
+//     "16:19",
+//     "18:14",
+//     "19:32",
+//     "19:52",
+//   ],
+//   [
+//     15,
+//     "05:36",
+//     "05:56",
+//     "07:30",
+//     "12:55",
+//     "15:33",
+//     "16:17",
+//     "18:12",
+//     "19:30",
+//     "19:52",
+//   ],
+//   [
+//     16,
+//     "05:38",
+//     "05:58",
+//     "07:32",
+//     "12:55",
+//     "15:31",
+//     "16:15",
+//     "18:09",
+//     "19:28",
+//     "19:51",
+//   ],
+//   [
+//     17,
+//     "05:40",
+//     "05:59",
+//     "07:34",
+//     "12:55",
+//     "15:29",
+//     "16:13",
+//     "18:07",
+//     "19:26",
+//     "19:50",
+//   ],
+//   [
+//     18,
+//     "05:41",
+//     "06:01",
+//     "07:36",
+//     "12:55",
+//     "15:28",
+//     "16:11",
+//     "18:05",
+//     "19:24",
+//     "19:48",
+//   ],
+//   [
+//     19,
+//     "05:43",
+//     "06:03",
+//     "07:37",
+//     "12:55",
+//     "15:26",
+//     "16:09",
+//     "18:03",
+//     "19:22",
+//     "19:47",
+//   ],
+//   [
+//     20,
+//     "05:45",
+//     "06:05",
+//     "07:39",
+//     "12:54",
+//     "15:24",
+//     "16:07",
+//     "18:01",
+//     "19:20",
+//     "19:46",
+//   ],
+//   [
+//     21,
+//     "05:46",
+//     "06:06",
+//     "07:41",
+//     "12:54",
+//     "15:23",
+//     "16:05",
+//     "17:59",
+//     "19:18",
+//     "19:46",
+//   ],
+//   [
+//     22,
+//     "05:48",
+//     "06:08",
+//     "07:43",
+//     "12:54",
+//     "15:21",
+//     "16:03",
+//     "17:57",
+//     "19:16",
+//     "19:45",
+//   ],
+//   [
+//     23,
+//     "05:50",
+//     "06:10",
+//     "07:45",
+//     "12:54",
+//     "15:19",
+//     "16:01",
+//     "17:54",
+//     "19:14",
+//     "19:44",
+//   ],
+//   [
+//     24,
+//     "05:51",
+//     "06:11",
+//     "07:46",
+//     "12:54",
+//     "15:18",
+//     "15:59",
+//     "17:52",
+//     "19:12",
+//     "19:43",
+//   ],
+//   [
+//     25,
+//     "04:53",
+//     "05:13",
+//     "06:48",
+//     "11:54",
+//     "14:16",
+//     "14:57",
+//     "16:50",
+//     "18:10",
+//     "18:42",
+//   ],
+//   [
+//     26,
+//     "04:55",
+//     "05:15",
+//     "06:50",
+//     "11:54",
+//     "14:15",
+//     "14:56",
+//     "16:48",
+//     "18:08",
+//     "18:41",
+//   ],
+//   [
+//     27,
+//     "04:56",
+//     "05:16",
+//     "06:52",
+//     "11:53",
+//     "14:13",
+//     "14:54",
+//     "16:46",
+//     "18:06",
+//     "18:40",
+//   ],
+//   [
+//     28,
+//     "04:58",
+//     "05:18",
+//     "06:54",
+//     "11:53",
+//     "14:11",
+//     "14:52",
+//     "16:44",
+//     "18:05",
+//     "18:38",
+//   ],
+//   [
+//     29,
+//     "05:00",
+//     "05:20",
+//     "06:56",
+//     "11:53",
+//     "14:10",
+//     "14:50",
+//     "16:42",
+//     "18:03",
+//     "18:36",
+//   ],
+//   [
+//     30,
+//     "05:01",
+//     "05:21",
+//     "06:57",
+//     "11:53",
+//     "14:08",
+//     "14:48",
+//     "16:40",
+//     "18:01",
+//     "18:34",
+//   ],
+//   [
+//     31,
+//     "05:03",
+//     "05:23",
+//     "06:59",
+//     "11:53",
+//     "14:07",
+//     "14:46",
+//     "16:38",
+//     "17:59",
+//     "18:33",
+//   ],
+// ].map(
+//   ([
+//     day,
+//     fajrEarly,
+//     fajrLate,
+//     sunrise,
+//     dhuhr,
+//     asrEarly,
+//     asrLate,
+//     maghrib,
+//     ishaEarly,
+//     ishaLate,
+//   ]) => ({
+//     day: +day,
+//     fajrEarly: String(fajrEarly),
+//     fajrLate: String(fajrLate),
+//     sunrise: String(sunrise),
+//     dhuhr: String(dhuhr),
+//     asrEarly: String(asrEarly),
+//     asrLate: String(asrLate),
+//     maghrib: String(maghrib),
+//     ishaEarly: String(ishaEarly),
+//     ishaLate: String(ishaLate),
+//   }),
+// );
+// const october2026Fallback: PrayerTimetable = {
+//   year: 2026,
+//   month: 10,
+//   days: october2026,
+//   sources: { ida: false, markazQuba: false },
+// };
+
 const hijriMonths = [
   "Muḥarram",
   "Ṣafar",
@@ -594,12 +597,13 @@ function countdown(clock: LondonClock | null, target: string, tomorrow = false) 
 
 export function PrayerDashboard({
   jummah,
-  timetable: scrapedTimetable,
+  timetable,
 }: {
   jummah: JummahSchedule | null;
   timetable: PrayerTimetable | null;
 }) {
-  const timetable = scrapedTimetable ?? october2026Fallback;
+  // DISABLED (Sufyan's hard-coded times) — fallback to the commented-out October table:
+  // const timetable = scrapedTimetable ?? october2026Fallback;
   // DISABLED (Sufyan's API) — keep for comparison, do not delete
   // const [liveTimes, setLiveTimes] = useState<PrayerTimes | null>(null);
   const [now, setNow] = useState<Date | null>(null);
@@ -615,6 +619,10 @@ export function PrayerDashboard({
       setTimetableOpen(false);
       setTimetableClosing(false);
     }, 220);
+  };
+  const showRoom = (roomId: string) => {
+    const room = prayerRooms.find((item) => item.id === roomId);
+    if (room) setActiveRoom(room);
   };
   const closeRoom = () => {
     if (roomClosing) return;
@@ -730,7 +738,7 @@ export function PrayerDashboard({
     <div className="wrap">
       {/* DISABLED (Sufyan's API) — keep for comparison, do not delete
       <LivePrayerTimes onLoad={setLiveTimes} /> */}
-      {fridayMode && <Jummah schedule={jummah} featured />}
+      {fridayMode && <Jummah schedule={jummah} featured onShowRoom={showRoom} />}
       <section className="prayer-hero">
         <div>
           <div className="date-lockup">
@@ -767,15 +775,11 @@ export function PrayerDashboard({
             <span className="eyebrow">Prayer times</span>
             <div className="target">
               <span>
-                Prayer times are temporarily unavailable. Please check the{" "}
-                <a href="https://www.salaahtimes.co.uk/Mosque/Details/15" target="_blank" rel="noopener noreferrer">
-                  IDA
+                Prayer times are currently unavailable. Please visit our{" "}
+                <a className="unavailable-link" href="https://www.instagram.com/ulisoc/" target="_blank" rel="noopener noreferrer">
+                  Instagram
                 </a>{" "}
-                or{" "}
-                <a href="https://mawaqit.net/en/markaz-quba-islamic-centre-leicester-le2-0nq-united-kingdom" target="_blank" rel="noopener noreferrer">
-                  Markaz Quba
-                </a>{" "}
-                timetables.
+                to download the timetables.
               </span>
             </div>
           </div>
@@ -831,7 +835,7 @@ export function PrayerDashboard({
           Find a prayer room <span>↗</span>
         </a>
       </div>
-      {!fridayMode && <Jummah schedule={jummah} />}
+      {!fridayMode && <Jummah schedule={jummah} onShowRoom={showRoom} />}
       <section className="info-grid" id="rooms">
         <div>
           <p className="eyebrow">On campus</p>
@@ -1014,14 +1018,25 @@ export function PrayerDashboard({
           border-color: #b3222d;
         }
         .jummah-head {
-          display: grid;
-          grid-template-columns: 1.15fr 0.85fr;
-          gap: 40px;
-          align-items: end;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          gap: 24px 40px;
+          flex-wrap: wrap;
+          padding-bottom: 26px;
+          border-bottom: 1px solid var(--border);
+        }
+        .featured .jummah-head {
+          border-bottom-color: rgba(255, 255, 255, 0.35);
         }
         .jummah-title {
           font-size: clamp(50px, 7vw, 90px);
-          margin: 8px 0;
+          margin: 8px 0 0;
+          line-height: 0.9;
+        }
+        .jummah-place {
+          max-width: 360px;
+          text-align: right;
         }
         .jummah-venue {
           font-size: 22px;
@@ -1035,59 +1050,105 @@ export function PrayerDashboard({
         .featured .jummah-detail {
           color: #fff;
         }
+        button.directions {
+          background: none;
+          border: 0;
+          border-bottom: 2px solid currentColor;
+          color: inherit;
+          font-family: inherit;
+          letter-spacing: inherit;
+          cursor: pointer;
+          padding: 0 0 4px;
+        }
         .directions {
           display: inline-block;
-          margin-top: 18px;
+          margin-top: 14px;
           text-transform: uppercase;
           font-size: 12px;
           font-weight: 900;
           border-bottom: 2px solid currentColor;
           padding-bottom: 4px;
         }
-        .jummah-times {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 12px;
+        .jummah-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 8px;
+          table-layout: fixed;
         }
-        .jummah-time {
-          border: 1px solid #4b3d3d;
-          padding: 18px;
+        .jummah-table th,
+        .jummah-table td {
+          padding: 16px 12px;
+          border-bottom: 1px solid var(--border);
+          text-align: left;
         }
-        .featured .jummah-time {
-          border-color: #d76c70;
+        .featured .jummah-table th,
+        .featured .jummah-table td {
+          border-bottom-color: rgba(255, 255, 255, 0.25);
         }
-        .jummah-time h3 {
-          margin: 0 0 12px;
+        .jummah-table thead th {
+          color: #c52028;
           text-transform: uppercase;
-          font-size: 13px;
+          letter-spacing: 0.12em;
+          font-size: 12px;
+          font-weight: 900;
+          padding-top: 22px;
+          padding-bottom: 12px;
         }
-        .jummah-time dl {
-          margin: 0;
-          display: grid;
-          grid-template-columns: 1fr auto;
-          gap: 8px 18px;
-        }
-        .jummah-time dt {
-          color: #aaa;
-        }
-        .featured .jummah-time dt {
+        .featured .jummah-table thead th {
           color: #fff;
         }
-        .jummah-time dd {
-          margin: 0;
-          font-weight: 800;
+        .jummah-table tbody th {
+          width: 34%;
+          color: #aaa;
+          font-weight: 600;
+        }
+        .featured .jummah-table tbody th {
+          color: #fff;
+        }
+        .jummah-table td {
+          font-family: var(--font-display);
+          font-size: 32px;
+          line-height: 1;
+          color: #fff;
           font-variant-numeric: tabular-nums;
         }
-        .sisters-note {
-          margin: 24px 0 0;
-          padding: 16px 18px;
-          background: #21190d;
-          border-left: 4px solid #c9a96e;
-          color: #f5f0ed;
+        .jummah-table td.text-cell {
+          font-family: inherit;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 1.3;
         }
-        .featured .sisters-note {
-          background: #7e0006;
-          border-left-color: #fff;
+        .jummah-table .salah-row th,
+        .jummah-table .salah-row td {
+          background: rgba(179, 34, 45, 0.16);
+          border-bottom: 0;
+        }
+        .jummah-table .salah-row th {
+          color: #fff;
+          box-shadow: inset 4px 0 #b3222d;
+        }
+        .featured .jummah-table .salah-row th,
+        .featured .jummah-table .salah-row td {
+          background: rgba(0, 0, 0, 0.18);
+        }
+        .featured .jummah-table .salah-row th {
+          box-shadow: inset 4px 0 #fff;
+        }
+        .jummah-note {
+          margin: 12px 0 0;
+          color: #89817e;
+          font-size: 13px;
+        }
+        .featured .jummah-note {
+          color: rgba(255, 255, 255, 0.85);
+        }
+        .sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          clip: rect(0 0 0 0);
+          white-space: nowrap;
         }
         .jummah-announcement {
           margin: 14px 0 0;
@@ -1155,11 +1216,21 @@ export function PrayerDashboard({
             margin-bottom: 64px;
           }
           .jummah-head {
-            grid-template-columns: 1fr;
-            gap: 24px;
+            flex-direction: column;
+            align-items: flex-start;
           }
-          .jummah-times {
-            grid-template-columns: 1fr;
+          .jummah-place {
+            text-align: left;
+          }
+          .jummah-table th,
+          .jummah-table td {
+            padding: 13px 8px;
+          }
+          .jummah-table td {
+            font-size: 26px;
+          }
+          .jummah-table td.text-cell {
+            font-size: 14px;
           }
           .info-grid {
             grid-template-columns: 1fr;
@@ -1189,6 +1260,15 @@ export function PrayerDashboard({
           font-weight: 700;
           color: #f5f0ed;
           letter-spacing: 0.01em;
+        }
+        .unavailable-link {
+          color: var(--text-red);
+          text-decoration: underline;
+          text-underline-offset: 3px;
+        }
+        .unavailable-link:hover,
+        .unavailable-link:focus-visible {
+          color: #fff;
         }
         .target strong {
           font-size: 28px;
@@ -1987,6 +2067,8 @@ function TimeRow({
 const jummahVenues = {
   "sports-hall": {
     name: "Charles Wilson Sports Hall",
+    // Opens this room in "Where to pray"; venues without one link to Google Maps.
+    room: "charles-wilson",
     detail: "Charles Wilson Building, University Road",
     sisters: "Space is available for sisters at the back of the sports hall.",
     maps: "https://www.google.com/maps/search/?api=1&query=Charles+Wilson+Building+University+of+Leicester",
@@ -1997,18 +2079,29 @@ const jummahVenues = {
     sisters: "Sisters should use the Charles Wilson prayer room for Zuhr.",
     maps: "https://www.google.com/maps/search/?api=1&query=Percy+Gee+Building+University+of+Leicester",
   },
-} as const;
+} as const satisfies Record<
+  string,
+  { name: string; detail: string; sisters: string; maps: string; room?: string }
+>;
 function Jummah({
   schedule,
   featured = false,
+  onShowRoom,
 }: {
   schedule: JummahSchedule | null;
   featured?: boolean;
+  onShowRoom: (roomId: string) => void;
 }) {
   const noCampus = schedule?.venue === "no-campus";
   const venue =
     schedule && !noCampus
-      ? jummahVenues[schedule.venue as keyof typeof jummahVenues]
+      ? (jummahVenues[schedule.venue as keyof typeof jummahVenues] as {
+          name: string;
+          detail: string;
+          sisters: string;
+          maps: string;
+          room?: string;
+        })
       : null;
   const friday = schedule
     ? new Date(`${schedule.fridayDate}T12:00:00`).toLocaleDateString("en-GB", {
@@ -2028,6 +2121,8 @@ function Jummah({
             {friday}
           </p>
           <h2 className="display jummah-title">JUMU&apos;AH</h2>
+        </div>
+        <div className="jummah-place">
           {noCampus ? (
             <>
               <p className="jummah-venue">No on-campus Jumu‘ah</p>
@@ -2040,14 +2135,24 @@ function Jummah({
             <>
               <p className="jummah-venue">{venue.name}</p>
               <p className="jummah-detail">{venue.detail}</p>
-              <a
-                className="directions"
-                href={venue.maps}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Get directions ↗
-              </a>
+              {venue.room ? (
+                <button
+                  className="directions"
+                  type="button"
+                  onClick={() => onShowRoom(venue.room!)}
+                >
+                  Get directions ↗
+                </button>
+              ) : (
+                <a
+                  className="directions"
+                  href={venue.maps}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Get directions ↗
+                </a>
+              )}
             </>
           ) : (
             <p className="pending">
@@ -2055,66 +2160,46 @@ function Jummah({
             </p>
           )}
         </div>
-        {schedule && !noCampus && (
-          <div className="jummah-times">
-            <JummahTime
-              title="First Jumu‘ah"
-              adhan={schedule.firstAdhan}
-              talk={schedule.firstTalk}
-              khutbah={schedule.firstKhutbah}
-              salah={schedule.firstSalah}
-            />
-            <JummahTime
-              title="Second Jumu‘ah"
-              adhan={schedule.secondAdhan}
-              khutbah={schedule.secondKhutbah}
-              salah={schedule.secondSalah}
-            />
-          </div>
-        )}
       </div>
-      {venue && (
-        <p className="sisters-note">
-          <strong>Sisters:</strong> {venue.sisters}
-        </p>
-      )}
+      {schedule && !noCampus && <JummahTable schedule={schedule} />}
       {schedule?.announcement && (
         <p className="jummah-announcement">{schedule.announcement}</p>
       )}
     </section>
   );
 }
-function JummahTime({
-  title,
-  adhan,
-  talk,
-  khutbah,
-  salah,
-}: {
-  title: string;
-  adhan: string;
-  talk?: string | null;
-  khutbah: string;
-  salah: string;
-}) {
+// Both Jumu‘ahs side by side so each stage lines up across the row.
+function JummahTable({ schedule }: { schedule: JummahSchedule }) {
+  const rows = [
+    { label: "Adhān", first: schedule.firstAdhan, second: schedule.secondAdhan },
+    ...(schedule.firstTalk
+      ? [{ label: "Talk", first: schedule.firstTalk, second: null, text: true }]
+      : []),
+    { label: "Khuṭbah", first: schedule.firstKhutbah, second: schedule.secondKhutbah },
+    { label: "Ṣalāh", first: schedule.firstSalah, second: schedule.secondSalah, salah: true },
+  ];
   return (
-    <article className="jummah-time">
-      <h3>{title}</h3>
-      <dl>
-        <dt>Adhān</dt>
-        <dd>{adhan}</dd>
-        {talk && (
-          <>
-            <dt>Talk</dt>
-            <dd>{talk}</dd>
-          </>
-        )}
-        <dt>Khuṭbah</dt>
-        <dd>{khutbah}</dd>
-        <dt>Ṣalāh</dt>
-        <dd>{salah}</dd>
-      </dl>
-    </article>
+    <>
+      <table className="jummah-table">
+        <thead>
+          <tr>
+            <th scope="col"><span className="sr-only">Stage</span></th>
+            <th scope="col">1st Jumu‘ah</th>
+            <th scope="col">2nd Jumu‘ah</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr key={row.label} className={row.salah ? "salah-row" : undefined}>
+              <th scope="row">{row.label}</th>
+              <td className={row.text ? "text-cell" : undefined}>{row.first}</td>
+              <td className={row.text ? "text-cell" : undefined}>{row.second ?? "—"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="jummah-note">Khuṭbah and ṣalāh times are approximate.</p>
+    </>
   );
 }
 function Location({ name, detail }: { name: string; detail: string }) {
