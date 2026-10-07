@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791373574335,
+      "tag": "0000_init_supabase",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791376366244,
+      "tag": "0001_member_auth",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791376369422,
+      "tag": "0002_members_table",
+      "breakpoints": true
+    }
+  ]
+}

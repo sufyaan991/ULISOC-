@@ -37,13 +37,13 @@ test("Next.js serves public pages without a database and disables unfinished ser
     assert.match(response.headers.get("content-type"), /text\/html/);
     assert.equal(response.headers.get("x-content-type-options"), "nosniff");
   }
-  for (const route of ["/api/admin/jummah", "/api/automation/jummah", "/api/jummah", "/api/membership/verify-pass"]) {
+  for (const route of ["/api/admin/jummah", "/api/jummah", "/api/membership/verify-pass"]) {
     const response = await fetch(`${base}${route}`);
     assert.equal(response.status, 503, route);
     assert.match((await response.json()).error, /temporarily unavailable/);
     assert.match(response.headers.get("cache-control"), /no-store/);
   }
-  for (const route of ["/api/admin/login", "/api/discounts/request-code", "/api/membership/create-pass"]) {
+  for (const route of ["/api/admin/login", "/api/member/request-code", "/api/member/verify-code", "/api/discounts/code", "/api/membership/create-pass"]) {
     const response = await fetch(`${base}${route}`, { method: "POST", headers: { "content-type": "application/json" }, body: "{}" });
     assert.equal(response.status, 503, route);
   }

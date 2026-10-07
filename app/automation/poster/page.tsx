@@ -1,7 +1,6 @@
 import { databaseFeaturesEnabled } from "@/lib/features";
 import { headers } from "next/headers";
 import { hasEditorSession } from "@/lib/jummah-auth";
-import { hasAutomationAccess } from "@/lib/jummah-automation";
 import { getJummahForFriday } from "@/lib/jummah";
 import { JummahPoster } from "@/components/jummah-poster";
 
@@ -47,8 +46,7 @@ export default async function AutomationPosterPage({
 
   const authorised =
     localFixture ||
-    (await hasEditorSession()) ||
-    (await hasAutomationAccess(requestHeaders));
+    (await hasEditorSession());
 
   if (!authorised) {
     return <PlainStatus message="Not authorised" />;

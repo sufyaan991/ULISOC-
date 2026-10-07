@@ -11,7 +11,7 @@ export function jsonNoStore(body: unknown, init: ResponseInit = {}) {
   return new Response(JSON.stringify(body), { ...init, headers });
 }
 
-export function runtimeSecret(name: "AUTH_SESSION_SECRET" | "MEMBERSHIP_HMAC_SECRET" | "DATA_ENCRYPTION_SECRET" | "ULISOC_AUTOMATION_SECRET") {
+export function runtimeSecret(name: "AUTH_SESSION_SECRET" | "MEMBERSHIP_HMAC_SECRET" | "DATA_ENCRYPTION_SECRET") {
   const value = runtime()[name];
   if (!value || value.length < 32) throw new Error(`${name} is not configured securely.`);
   return value;

@@ -30,6 +30,11 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 !/.env.example
+.dev.vars*
+# credentials (e.g. Google Wallet service-account JSON, private keys)
+*service-account*.json
+*-credentials.json
+*.key
 *.db
 *.db-shm
 *.db-wal

@@ -18,11 +18,6 @@ async function encryptionKey() {
   const digest = await crypto.subtle.digest("SHA-256", encoder.encode(`ulisoc-data-v1:${runtimeSecret("DATA_ENCRYPTION_SECRET")}`));
   return crypto.subtle.importKey("raw", digest, "AES-GCM", false, ["encrypt", "decrypt"]);
 }
-async function legacyHmac(value:string){
-  // Transitional read-only compatibility for records created before key separation.
-  const secret=runtime().JUMMAH_SESSION_SECRET;if(!secret)return null;
-  return bytesToBase64(await hmacBytes(secret,value));
-}
 async function legacyEncryptionKey(){
   // Removed after the one-time crypto_migration_v2 marker is written.
   const secret=runtime().JUMMAH_SESSION_SECRET;if(!secret)return null;
@@ -33,9 +28,7 @@ async function legacyEncryptionKey(){
 export function normalizeEmail(value: string) { return value.trim().toLowerCase(); }
 export function isEmail(value: string) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.length <= 254; }
 export async function hashEmail(value: string) { return hmac(`email:${normalizeEmail(value)}`); }
-export async function legacyHashEmail(value:string){return legacyHmac(`email:${normalizeEmail(value)}`)}
 export async function hashIp(value: string) { return hmac(`ip:${value || "unknown"}`); }
-export async function hashOtp(id: string, code: string) { return hmac(`otp:${id}:${code}`); }
 
 export async function encryptSecret(value: string) {
   const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -56,7 +49,7 @@ export async function decryptSecret(encryptedValue: string, iv: string) {
 export const encryptMemberEmail = encryptSecret;
 export const decryptMemberEmail = decryptSecret;
 
-export async function getDiscountSecret(key: "brevo_api_key" | "podur_code" | "calis_code" | "wallet_service_account") {
+export async function getDiscountSecret(key: "podur_code" | "calis_code" | "wallet_service_account") {
   const row = await database.prepare("SELECT encrypted_value, iv FROM discount_secrets WHERE key = ?").bind(key).first<{encrypted_value:string;iv:string}>();
   if (!row) return null;
   return decryptSecret(row.encrypted_value, row.iv);

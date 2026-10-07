@@ -19,7 +19,7 @@ export default async function PosterGeneratorPage() {
       <h1 className="display">POSTER<br /><span>GENERATOR</span></h1>
       <div className="poster-placeholder-card">
         <strong>{schedule?"POSTER READY":"NOT READY"}</strong>
-        <p>{schedule?"This poster uses the currently published Jumu‘ah information. The WhatsApp worker captures the same 1080 × 1350 design.":"Publish the upcoming Friday in the Jumu‘ah editor first."}</p>
+        <p>{schedule?"This poster uses the currently published Jumu‘ah information.":"Publish the upcoming Friday in the Jumu‘ah editor first."}</p>
         {schedule&&<><div className="poster-preview"><iframe title="Current Jumu‘ah poster" src={`/automation/poster?date=${encodeURIComponent(schedule.fridayDate)}`}/></div><a href={`/automation/poster?date=${encodeURIComponent(schedule.fridayDate)}`} target="_blank" rel="noreferrer">Open full-size poster ↗</a></>}
       </div>
     </section>

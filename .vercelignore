@@ -6,7 +6,6 @@
 .openai
 .env*
 node_modules
-automation
 worker
 examples
 build

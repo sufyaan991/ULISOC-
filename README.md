@@ -5,8 +5,8 @@ University of Leicester Islamic Society website, using Next.js on Vercel.
 ## Current deployment
 
 The public website runs without a database. Membership verification, Wallet
-passes, committee tools and all API routes are temporarily unavailable.
-Supabase is the planned database and will be configured separately.
+passes, committee tools and API routes use Supabase Postgres and stay disabled
+until `NEXT_PUBLIC_DATABASE_FEATURES_ENABLED=true` is set.
 
 ## Development
 
@@ -24,14 +24,13 @@ npm run dev
 
 See [DEPLOYMENT.md](./DEPLOYMENT.md) for Vercel and domain setup.
 
-## Future Supabase work
+## Supabase
 
-`lib/features.ts` disables database-backed services. `proxy.ts` returns a no-store
-503 response from API routes. `db/sql.ts` and `db/index.ts` fail closed without
-connecting to a database. Existing SQLite schema/migrations and API logic are
-retained as reference for the future PostgreSQL/Supabase migration. Do not enable
-the feature flag until that migration, authentication and integration tests are
-complete. Merely adding Supabase credentials does not enable these features.
+Copy `.env.example` to `.env.local` and fill in the Supabase connection strings
+and secrets. After editing `db/schema.ts`, run `npm run db:generate` to create a
+migration. Run `npm run db:migrate` to apply migrations. `lib/features.ts` reads
+the feature flag. While the flag is off, `proxy.ts` returns a no-store 503 from
+API routes. See DEPLOYMENT.md for setup steps.
 
 The original data may include encrypted records and hashed member emails. If
 preserving that data, obtain the original database export and encryption/HMAC
@@ -42,6 +41,3 @@ secrets from its owner before migration.
 `worker/`, `vite.config.ts`, `build/`, `examples/d1/`, `.openai/` and the Sites shell
 scripts came from the original Cloudflare/Vinext starter and are not used by the
 Vercel build. `app/chatgpt-auth.ts` is an unused legacy helper.
-
-`automation/whatsapp-worker` is a separately hosted service; it remains disabled
-until the database and protected automation API are connected.

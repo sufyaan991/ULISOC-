@@ -11,23 +11,23 @@ test("admin authentication has per-IP throttling and expiring unique sessions",a
   assert.match(auth,/crypto\.randomUUID\(\)/);assert.match(auth,/iat/);assert.match(auth,/exp/);assert.match(auth,/payload\.exp>now/);assert.match(auth,/AUTH_SESSION_SECRET/);
 });
 
-test("WhatsApp automation is secret-protected and safe by default",async()=>{
-  const [route,automation,workerEnv,workerCli]=await Promise.all([source("app/api/automation/jummah/route.ts"),source("lib/jummah-automation.ts"),source("automation/whatsapp-worker/.env.example"),source("automation/whatsapp-worker/src/cli.mjs")]);
-  assert.match(route,/hasAutomationAccess/);assert.match(route,/jsonNoStore/);
-  assert.match(automation,/ULISOC_AUTOMATION_SECRET/);assert.match(automation,/sendable:false/);assert.match(automation,/no-campus/);
-  assert.match(workerEnv,/DRY_RUN=true/);assert.match(workerEnv,/SCHEDULER_ENABLED=false/);assert.match(workerEnv,/Europe\/London/);
-  assert.match(workerCli,/--confirm/);assert.match(workerCli,/noOverlap:true/);
+test("sensitive routes use no-store and admin writes verify origin",async()=>{
+  const paths=["app/api/admin/discounts/route.ts","app/api/discounts/code/route.ts","app/api/member/request-code/route.ts","app/api/member/verify-code/route.ts","app/api/member/session/route.ts","app/api/membership/create-pass/route.ts"];
+  for(const path of paths)assert.match(await source(path),/jsonNoStore/);
+  for(const path of ["app/api/admin/login/route.ts","app/api/admin/logout/route.ts","app/api/admin/discounts/route.ts","app/api/admin/jummah/route.ts","app/api/member/request-code/route.ts","app/api/member/verify-code/route.ts","app/api/member/sign-out/route.ts","app/api/discounts/code/route.ts","app/api/membership/create-pass/route.ts"])assert.match(await source(path),/requireSameOrigin/);
 });
 
-test("sensitive routes use no-store and admin writes verify origin",async()=>{
-  const paths=["app/api/admin/discounts/route.ts","app/api/discounts/verify-code/route.ts","app/api/membership/verify-code/route.ts","app/api/membership/create-pass/route.ts"];
-  for(const path of paths)assert.match(await source(path),/jsonNoStore/);
-  for(const path of ["app/api/admin/login/route.ts","app/api/admin/logout/route.ts","app/api/admin/discounts/route.ts","app/api/admin/jummah/route.ts"])assert.match(await source(path),/requireSameOrigin/);
+test("members-only routes re-check the member list on every request",async()=>{
+  const [code,pass,members,request]=await Promise.all([source("app/api/discounts/code/route.ts"),source("app/api/membership/create-pass/route.ts"),source("lib/members.ts"),source("app/api/member/request-code/route.ts")]);
+  assert.match(code,/currentMember\(\)/);assert.match(pass,/currentMember\(\)/);
+  assert.match(members,/auth\.getUser\(\)/);assert.match(members,/lower\(email\) = lower\(\?\)/);
+  // Same response for members and non-members, so the endpoint does not reveal who is a member.
+  assert.match(request,/if \(member\)/);assert.doesNotMatch(request,/status: 404/);
 });
 
 test("discounts contain no embedded map or Cali's secret",async()=>{
-  const [page,verify]=await Promise.all([source("app/discounts/page.tsx"),source("app/api/discounts/verify-code/route.ts")]);
-  assert.doesNotMatch(page,/<iframe|output=embed/);assert.doesNotMatch(verify,/ULISOC20/);assert.match(verify,/calis_code/);
+  const [page,code]=await Promise.all([source("app/discounts/page.tsx"),source("app/api/discounts/code/route.ts")]);
+  assert.doesNotMatch(page,/<iframe|output=embed/);assert.doesNotMatch(code,/ULISOC20/);assert.match(code,/calis_code/);
 });
 
 test("Wallet passes use signed longer IDs and an expiry interval",async()=>{

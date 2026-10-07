@@ -41,7 +41,6 @@
     "worker",
     "examples",
     "build",
-    "vite.config.ts",
-    "automation"
+    "vite.config.ts"
   ]
 }

@@ -1,22 +1,12 @@
 "use client";
-import LivePrayerTimes, { type PrayerTimes } from "@/components/live-prayer-times";
 import { useEffect, useMemo, useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { JummahSchedule } from "@/lib/jummah";
+import type { MonthRow, PrayerTimetable } from "@/lib/prayer-times";
+// DISABLED (Sufyan's API) — keep for comparison, do not delete
+// import LivePrayerTimes, { type PrayerTimes } from "@/components/live-prayer-times";
 
 type Choice = "early" | "late";
-type MonthRow = {
-  day: number;
-  fajrEarly: string;
-  fajrLate: string;
-  sunrise: string;
-  dhuhr: string;
-  asrEarly: string;
-  asrLate: string;
-  maghrib: string;
-  ishaEarly: string;
-  ishaLate: string;
-};
 type PrayerRoom = {
   id: string;
   name: string;
@@ -112,6 +102,8 @@ const roomInformation: Record<
     ],
   },
 };
+// Sufyan's hard-coded October 2026 timetable (commit 3a02d9b). Used only when both
+// masjid sources are unavailable, so the page still shows times that month.
 const october2026: MonthRow[] = [
   [
     1,
@@ -510,6 +502,12 @@ const october2026: MonthRow[] = [
     ishaLate: String(ishaLate),
   }),
 );
+const october2026Fallback: PrayerTimetable = {
+  year: 2026,
+  month: 10,
+  days: october2026,
+  sources: { ida: false, markazQuba: false },
+};
 const hijriMonths = [
   "Muḥarram",
   "Ṣafar",
@@ -533,30 +531,77 @@ function formatHijriDate(date: Date) {
     day: "numeric",
     month: "numeric",
     year: "numeric",
+    timeZone: "Europe/London",
   }).formatToParts(date);
   const part = (type: Intl.DateTimeFormatPartTypes) =>
     parts.find((item) => item.type === type)?.value ?? "";
   return `${part("day")} ${hijriMonths[Number(part("month")) - 1]} ${part("year")} AH`;
 }
-function countdown(now: Date | null, target: string, tomorrow = false) {
-  if (!now) return "--h --m --s";
-  const targetDate = new Date(now);
-  const [h, m] = target.split(":").map(Number);
-  targetDate.setHours(h, m, 0, 0);
-  if (tomorrow || targetDate.getTime() <= now.getTime())
-    targetDate.setDate(targetDate.getDate() + 1);
-  const total = Math.max(
-    0,
-    Math.floor((targetDate.getTime() - now.getTime()) / 1000),
-  );
+type LondonClock = {
+  year: number;
+  month: number;
+  day: number;
+  weekday: number;
+  seconds: number;
+};
+// Prayer times are for Leicester, so read the clock in UK time whatever the visitor's device is set to.
+function londonClock(now: Date): LondonClock {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/London",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    weekday: "short",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    hourCycle: "h23",
+  }).formatToParts(now);
+  const value = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((item) => item.type === type)?.value ?? "";
+  return {
+    year: Number(value("year")),
+    month: Number(value("month")),
+    day: Number(value("day")),
+    weekday: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(value("weekday")),
+    seconds:
+      Number(value("hour")) * 3600 +
+      Number(value("minute")) * 60 +
+      Number(value("second")),
+  };
+}
+const placeholderRow: MonthRow = {
+  day: 0,
+  fajrEarly: "--:--",
+  fajrLate: "--:--",
+  sunrise: "--:--",
+  dhuhr: "--:--",
+  asrEarly: "--:--",
+  asrLate: "--:--",
+  maghrib: "--:--",
+  ishaEarly: "--:--",
+  ishaLate: "--:--",
+};
+function countdown(clock: LondonClock | null, target: string, tomorrow = false) {
+  if (!clock || !/^\d{2}:\d{2}$/.test(target)) return "--h --m --s";
+  let total = mins(target) * 60 - clock.seconds;
+  if (tomorrow || total <= 0) total += 24 * 3600;
   const hours = Math.floor(total / 3600);
   const minutes = Math.floor((total % 3600) / 60);
   const seconds = total % 60;
   return `${hours}h ${String(minutes).padStart(2, "0")}m ${String(seconds).padStart(2, "0")}s`;
 }
 
-export function PrayerDashboard({ jummah }: { jummah: JummahSchedule | null }){
-  const [liveTimes, setLiveTimes] = useState<PrayerTimes | null>(null);
+export function PrayerDashboard({
+  jummah,
+  timetable: scrapedTimetable,
+}: {
+  jummah: JummahSchedule | null;
+  timetable: PrayerTimetable | null;
+}) {
+  const timetable = scrapedTimetable ?? october2026Fallback;
+  // DISABLED (Sufyan's API) — keep for comparison, do not delete
+  // const [liveTimes, setLiveTimes] = useState<PrayerTimes | null>(null);
   const [now, setNow] = useState<Date | null>(null);
   const [choice, setChoice] = useState<Choice>("early");
   const [timetableOpen, setTimetableOpen] = useState(false);
@@ -606,24 +651,36 @@ export function PrayerDashboard({ jummah }: { jummah: JummahSchedule | null }){
       document.body.style.overflow = "";
     };
   }, [activeRoom]);
-  const savedToday =
-    now && now.getFullYear() === 2026 && now.getMonth() === 9
-      ? october2026[now.getDate() - 1]
-      : october2026[0];
-  const today: MonthRow = liveTimes
-    ? {
-        day: savedToday.day,
-        fajrEarly: liveTimes.fajr,
-        fajrLate: liveTimes.fajr,
-        sunrise: liveTimes.sunrise,
-        dhuhr: liveTimes.dhuhr,
-        asrEarly: liveTimes.asrEarly,
-        asrLate: liveTimes.asrLate,
-        maghrib: liveTimes.maghrib,
-        ishaEarly: liveTimes.isha,
-        ishaLate: liveTimes.isha,
-      }
-    : savedToday;
+  const clock = now ? londonClock(now) : null;
+  const row =
+    timetable &&
+    clock &&
+    clock.year === timetable.year &&
+    clock.month === timetable.month
+      ? (timetable.days[clock.day - 1] ?? null)
+      : null;
+  // Before the clock starts, show placeholders; after, a missing row means the data is unavailable.
+  const unavailable = !timetable || (clock !== null && !row);
+  const today = row ?? placeholderRow;
+  // DISABLED (Sufyan's API) — keep for comparison, do not delete
+  // const savedToday =
+  //   now && now.getFullYear() === 2026 && now.getMonth() === 9
+  //     ? october2026[now.getDate() - 1]
+  //     : october2026[0];
+  // const today: MonthRow = liveTimes
+  //   ? {
+  //       day: savedToday.day,
+  //       fajrEarly: liveTimes.fajr,
+  //       fajrLate: liveTimes.fajr,
+  //       sunrise: liveTimes.sunrise,
+  //       dhuhr: liveTimes.dhuhr,
+  //       asrEarly: liveTimes.asrEarly,
+  //       asrLate: liveTimes.asrLate,
+  //       maghrib: liveTimes.maghrib,
+  //       ishaEarly: liveTimes.isha,
+  //       ishaLate: liveTimes.isha,
+  //     }
+  //   : savedToday;
   const prayers = useMemo(
     () => [
       {
@@ -646,7 +703,7 @@ export function PrayerDashboard({ jummah }: { jummah: JummahSchedule | null }){
     ],
     [choice, today],
   );
-  const current = now ? now.getHours() * 60 + now.getMinutes() : 0;
+  const current = clock ? Math.floor(clock.seconds / 60) : 0;
   const nextIndex = prayers.findIndex((p) => mins(p.begins) > current);
   const active = nextIndex === -1 ? 0 : nextIndex;
   const tomorrow = nextIndex === -1;
@@ -657,20 +714,22 @@ export function PrayerDashboard({ jummah }: { jummah: JummahSchedule | null }){
     ...prayers.slice(1),
   ];
   const activeDisplay = active === 0 ? 0 : active + 1;
-  const fridayMode = now
-    ? now.getDay() === 5 ||
-      (now.getDay() === 4 && current >= mins(today.maghrib))
+  const fridayMode = clock
+    ? clock.weekday === 5 ||
+      (clock.weekday === 4 && current >= mins(today.maghrib))
     : false;
   const date =
     now?.toLocaleDateString("en-GB", {
       weekday: "long",
       day: "numeric",
       month: "long",
+      timeZone: "Europe/London",
     }) ?? "Today";
   const islamicDate = now ? formatHijriDate(now) : "";
   return (
     <div className="wrap">
-      <LivePrayerTimes onLoad={setLiveTimes} />
+      {/* DISABLED (Sufyan's API) — keep for comparison, do not delete
+      <LivePrayerTimes onLoad={setLiveTimes} /> */}
       {fridayMode && <Jummah schedule={jummah} featured />}
       <section className="prayer-hero">
         <div>
@@ -703,48 +762,71 @@ export function PrayerDashboard({ jummah }: { jummah: JummahSchedule | null }){
             </Preference>
           </div>
         </div>
-        <div className="countdown-card">
-          <span className="eyebrow">
-            Time until {next.short}
-            {tomorrow ? " tomorrow" : ""}
-          </span>
-          <div className="countdown">
-            {countdown(now, next.begins, tomorrow)}
+        {unavailable ? (
+          <div className="countdown-card">
+            <span className="eyebrow">Prayer times</span>
+            <div className="target">
+              <span>
+                Prayer times are temporarily unavailable. Please check the{" "}
+                <a href="https://www.salaahtimes.co.uk/Mosque/Details/15" target="_blank" rel="noopener noreferrer">
+                  IDA
+                </a>{" "}
+                or{" "}
+                <a href="https://mawaqit.net/en/markaz-quba-islamic-centre-leicester-le2-0nq-united-kingdom" target="_blank" rel="noopener noreferrer">
+                  Markaz Quba
+                </a>{" "}
+                timetables.
+              </span>
+            </div>
           </div>
-          <div className="target">
-            <span>{next.short} begins</span>
-            <strong>{next.begins}</strong>
+        ) : (
+          <div className="countdown-card">
+            <span className="eyebrow">
+              Time until {next.short}
+              {tomorrow ? " tomorrow" : ""}
+            </span>
+            <div className="countdown">
+              {countdown(clock, next.begins, tomorrow)}
+            </div>
+            <div className="target">
+              <span>{next.short} begins</span>
+              <strong>{next.begins}</strong>
+            </div>
           </div>
-        </div>
+        )}
       </section>
-      <section
-        className="prayer-strip"
-        aria-label="Today's selected prayer times and sunrise"
-      >
-        {displayedTimes.map((p, i) => (
-          <article
-            className={
-              i === activeDisplay
-                ? "prayer-cell active"
-                : p.short === "Sunrise"
-                  ? "prayer-cell sunrise"
-                  : "prayer-cell"
-            }
-            key={p.short}
-          >
-            <span>{p.short}</span>
-            <strong>{p.begins}</strong>
-          </article>
-        ))}
-      </section>
-      <div className="quick-actions">
-        <button
-          className="action red-action"
-          type="button"
-          onClick={() => setTimetableOpen(true)}
+      {!unavailable && (
+        <section
+          className="prayer-strip"
+          aria-label="Today's selected prayer times and sunrise"
         >
-          View monthly timetable <span>↗</span>
-        </button>
+          {displayedTimes.map((p, i) => (
+            <article
+              className={
+                i === activeDisplay
+                  ? "prayer-cell active"
+                  : p.short === "Sunrise"
+                    ? "prayer-cell sunrise"
+                    : "prayer-cell"
+              }
+              key={p.short}
+            >
+              <span>{p.short}</span>
+              <strong>{p.begins}</strong>
+            </article>
+          ))}
+        </section>
+      )}
+      <div className="quick-actions">
+        {timetable && (
+          <button
+            className="action red-action"
+            type="button"
+            onClick={() => setTimetableOpen(true)}
+          >
+            View monthly timetable <span>↗</span>
+          </button>
+        )}
         <a className="action" href="#rooms">
           Find a prayer room <span>↗</span>
         </a>
@@ -791,8 +873,12 @@ export function PrayerDashboard({ jummah }: { jummah: JummahSchedule | null }){
           closing={roomClosing}
         />
       )}{" "}
-      {timetableOpen && (
-        <MonthlyTimetable onClose={closeTimetable} closing={timetableClosing} />
+      {timetableOpen && timetable && (
+        <MonthlyTimetable
+          timetable={timetable}
+          onClose={closeTimetable}
+          closing={timetableClosing}
+        />
       )}
       <style>{`
         .prayer-hero {
@@ -1509,7 +1595,18 @@ function PrayerRoomDetail({
     </div>
   );
 }
-function MonthlyTimetable({ onClose, closing }: { onClose: () => void; closing: boolean }) {
+function MonthlyTimetable({
+  timetable,
+  onClose,
+  closing,
+}: {
+  timetable: PrayerTimetable;
+  onClose: () => void;
+  closing: boolean;
+}) {
+  const title = new Date(Date.UTC(timetable.year, timetable.month - 1, 1))
+    .toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" })
+    .toUpperCase();
   return (
     <div
       className={`timetable-backdrop${closing ? " closing" : ""}`}
@@ -1525,7 +1622,7 @@ function MonthlyTimetable({ onClose, closing }: { onClose: () => void; closing: 
       >
         <header className="monthly-header">
           <h2 id="monthly-title" className="display">
-            OCTOBER 2026
+            {title}
           </h2>
           <div
             className="monthly-brand"
@@ -1573,15 +1670,16 @@ function MonthlyTimetable({ onClose, closing }: { onClose: () => void; closing: 
               </tr>
             </thead>
             <tbody>
-              {october2026.map((row) => {
-                const date = new Date(2026, 9, row.day);
-                const friday = date.getDay() === 5;
+              {timetable.days.map((row) => {
+                const date = new Date(Date.UTC(timetable.year, timetable.month - 1, row.day));
+                const friday = date.getUTCDay() === 5;
                 return (
                   <tr key={row.day} className={friday ? "friday" : undefined}>
                     <th>
                       {date.toLocaleDateString("en-GB", {
                         weekday: "short",
                         day: "numeric",
+                        timeZone: "UTC",
                       })}
                     </th>
                     <td>{row.fajrEarly}</td>
@@ -1602,6 +1700,7 @@ function MonthlyTimetable({ onClose, closing }: { onClose: () => void; closing: 
         <footer className="monthly-note">
           <span>
             Early / Late follows the preference used on the prayer page.
+            Times from Islamic Da&apos;wah Academy and Markaz Quba.
           </span>
           <strong>ulisoc.com</strong>
         </footer>
