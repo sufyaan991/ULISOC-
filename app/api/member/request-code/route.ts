@@ -5,8 +5,6 @@ import { createSupabaseServerClient } from "@/lib/supabase-server";
 
 export const dynamic = "force-dynamic";
 
-// Emails not on the member list are told so directly (the committee chose clarity over
-// hiding who is a member). Members get a sign-in code from Supabase Auth.
 export async function POST(request: Request) {
   const rejected = requireSameOrigin(request); if (rejected) return rejected;
   const oversized = rejectOversizedRequest(request, 4096); if (oversized) return oversized;

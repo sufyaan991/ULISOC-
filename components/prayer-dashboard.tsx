@@ -2173,7 +2173,7 @@ function JummahTable({ schedule }: { schedule: JummahSchedule }) {
   const rows = [
     { label: "Adhān", first: schedule.firstAdhan, second: schedule.secondAdhan },
     ...(schedule.firstTalk
-      ? [{ label: "Talk", first: schedule.firstTalk, second: null, text: true }]
+      ? [{ label: "Talk", first: schedule.firstTalk, second: null, text: !/^\d{2}:\d{2}$/.test(schedule.firstTalk) }]
       : []),
     { label: "Khuṭbah", first: schedule.firstKhutbah, second: schedule.secondKhutbah },
     { label: "Ṣalāh", first: schedule.firstSalah, second: schedule.secondSalah, salah: true },

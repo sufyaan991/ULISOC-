@@ -2,8 +2,12 @@ import { getDiscountSecret } from "@/lib/member-discounts";
 import { walletExpiryIso } from "@/lib/membership-lifecycle";
 import { base64UrlToBytes, bytesToBase64Url, hmacBytes, runtimeSecret, secureBytesEqual } from "@/lib/security";
 
-const ISSUER_ID = "3388000000023195368";
-const CLASS_ID = `${ISSUER_ID}.ulisoc_membership_2026_27`;
+// The issuer ID comes from the Google Pay & Wallet Console (not secret). The fallback is the
+// original issuer account, kept so existing passes keep their IDs if its key is recovered.
+const ISSUER_ID = process.env.GOOGLE_WALLET_ISSUER_ID?.trim() || "3388000000023195368";
+// One pass class per academic year, e.g. "<issuer>.ulisoc_membership_2026_27".
+const classIdFor = (academicYear: string) => `${ISSUER_ID}.ulisoc_membership_${academicYear.replace(/\D+/g, "_")}`;
+const WALLET_API = "https://walletobjects.googleapis.com/walletobjects/v1";
 const WALLET_ASSET_ORIGIN = "https://ulisoc.uk";
 
 type ServiceAccount = { client_email:string; private_key:string };
@@ -47,10 +51,30 @@ async function getWalletAccessToken(account: ServiceAccount) {
   return data.access_token;
 }
 
-async function updateExistingWalletObject(account: ServiceAccount, objectId: string, genericObject: Record<string, unknown>) {
-  const accessToken = await getWalletAccessToken(account);
-  const response = await fetch(`https://walletobjects.googleapis.com/walletobjects/v1/genericObject/${encodeURIComponent(objectId)}`, {
-    method: "PATCH",
+// Creates the academic year's pass class the first time a member asks for a pass,
+// so no class has to be set up by hand in the Wallet Console.
+async function ensureWalletClass(accessToken: string, classId: string) {
+  const headers = { authorization: `Bearer ${accessToken}`, "content-type": "application/json" };
+  const existing = await fetch(`${WALLET_API}/genericClass/${encodeURIComponent(classId)}`, { headers });
+  if (existing.ok) return;
+  if (existing.status !== 404) {
+    console.error("Google Wallet class lookup failed", existing.status, (await existing.text()).slice(0,240));
+    throw new Error("Google Wallet is temporarily unavailable.");
+  }
+  const created = await fetch(`${WALLET_API}/genericClass`, { method: "POST", headers, body: JSON.stringify({ id: classId }) });
+  // 409 means another request created it at the same moment.
+  if (!created.ok && created.status !== 409) {
+    console.error("Google Wallet class creation failed", created.status, (await created.text()).slice(0,240));
+    throw new Error("Google Wallet is temporarily unavailable.");
+  }
+}
+
+// PATCH changes only the given fields; PUT replaces the whole pass, so fields
+// dropped from the design (like the old QR code) disappear from existing passes too.
+async function updateExistingWalletObject(account: ServiceAccount, objectId: string, genericObject: Record<string, unknown>, accessToken?: string, method: "PATCH" | "PUT" = "PATCH") {
+  accessToken ??= await getWalletAccessToken(account);
+  const response = await fetch(`${WALLET_API}/genericObject/${encodeURIComponent(objectId)}`, {
+    method,
     headers: { authorization: `Bearer ${accessToken}`, "content-type": "application/json" },
     body: JSON.stringify(genericObject),
   });
@@ -100,10 +124,12 @@ export async function createGoogleWalletLink(objectId:string,membershipId:string
   if (!raw) throw new Error("Google Wallet is not configured yet.");
   const account = JSON.parse(raw) as ServiceAccount;
   if (!account.client_email || !account.private_key) throw new Error("The Google Wallet credential is invalid.");
-  const qrToken=await createMembershipQrToken(membershipId,academicYear,expiresAt);
+  const classId = classIdFor(academicYear);
+  const accessToken = await getWalletAccessToken(account);
+  await ensureWalletClass(accessToken, classId);
   const genericObject = {
     id: objectId,
-    classId: CLASS_ID,
+    classId,
     state: "ACTIVE",
     hexBackgroundColor: "#b10008",
     logo: { sourceUri:{ uri:`${WALLET_ASSET_ORIGIN}/assets/ulisoc-logo-red.png` }, contentDescription:{ defaultValue:{ language:"en-GB", value:"ULISOC emblem" } } },
@@ -111,14 +137,15 @@ export async function createGoogleWalletLink(objectId:string,membershipId:string
     cardTitle: { defaultValue:{ language:"en-GB", value:"University of Leicester Islamic Society" } },
     header: { defaultValue:{ language:"en-GB", value:memberName } },
     subheader: { defaultValue:{ language:"en-GB", value:"ULISOC Member" } },
-    barcode: { type:"QR_CODE", value:`https://ulisoc.uk/api/membership/verify-pass?token=${encodeURIComponent(qrToken)}`, alternateText:membershipId },
+    // No QR code on the pass (removed at the committee's request). createMembershipQrToken and
+    // /api/membership/verify-pass are kept so a scannable code can be added back later.
     validTimeInterval:{start:{date:new Date().toISOString()},end:{date:walletExpiryIso(expiresAt)}},
     textModulesData: [
       { id:"academic_year", header:"ACADEMIC YEAR", body:academicYear },
       { id:"membership_id", header:"MEMBERSHIP ID", body:membershipId },
     ],
   };
-  await updateExistingWalletObject(account, objectId, genericObject);
+  await updateExistingWalletObject(account, objectId, genericObject, accessToken, "PUT");
   const jwt = await signJwt(account, { iss:account.client_email, aud:"google", origins:["https://ulisoc.uk"], typ:"savetowallet", iat:Math.floor(Date.now()/1000), payload:{ genericObjects:[genericObject] } });
   return `https://pay.google.com/gp/v/save/${jwt}`;
 }

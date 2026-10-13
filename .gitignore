@@ -34,6 +34,7 @@ yarn-error.log*
 # credentials (e.g. Google Wallet service-account JSON, private keys)
 *service-account*.json
 *-credentials.json
+ulisoc-wallet-*.json
 *.key
 *.db
 *.db-shm

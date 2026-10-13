@@ -29,8 +29,9 @@ export async function POST(request:Request) {
   if(!pass) return jsonNoStore({error:"We couldn't create the membership pass."},{status:500});
   try {
     const memberName=await decryptSecret(pass.encrypted_name,pass.name_iv);
-    const walletUrl=await createGoogleWalletLink(pass.object_id,identity.membershipId,memberName,period.academicYear,period.expiresAt);
-    await database.prepare("UPDATE wallet_membership_passes SET member_email=?,membership_id=?,academic_year=?,expires_at=?,status='ACTIVE' WHERE email_hash=?").bind(member.email,identity.membershipId,period.academicYear,period.expiresAt,emailHash).run();
+    // Always use the current issuer's object ID, so changing GOOGLE_WALLET_ISSUER_ID doesn't break stored passes.
+    const walletUrl=await createGoogleWalletLink(identity.objectId,identity.membershipId,memberName,period.academicYear,period.expiresAt);
+    await database.prepare("UPDATE wallet_membership_passes SET member_email=?,object_id=?,membership_id=?,academic_year=?,expires_at=?,status='ACTIVE' WHERE email_hash=?").bind(member.email,identity.objectId,identity.membershipId,period.academicYear,period.expiresAt,emailHash).run();
     return jsonNoStore({ok:true,walletUrl,memberName,membershipId:identity.membershipId});
   } catch(error) {
     console.error("Google Wallet pass creation failed",error);
